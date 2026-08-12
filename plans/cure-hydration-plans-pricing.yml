@@ -1,0 +1,35 @@
+generated: '2026-08-11'
+method: searched
+source: https://www.curehydration.com/agents.md
+summary: >-
+  Cure Hydration is a direct-to-consumer beverage brand. It sells electrolyte drink mix, not
+  API access. There is no developer plan, no API tier, no metered pricing and no paid
+  developer product of any kind. The machine surfaces on the domain — the UCP/MCP commerce
+  server, the Storefront GraphQL API, and the read-only storefront JSON endpoints — are
+  free, unmetered and require no account.
+plan_count: 0
+plan_count_note: >-
+  An honest zero for API plans, not an unchecked field. The pricing pages on this site price
+  retail product (drink mix, bundles, subscriptions), which is out of scope for this artifact.
+plans: []
+api_access:
+  cost: free
+  account_required: false
+  credential_required: false
+  gate: 'A resolvable UCP agent profile URI on MCP tool calls — an identity gate, not a paywall.'
+retail_commerce:
+  in_scope: false
+  note: >-
+    Consumer product pricing exists on the site and in the catalog surfaces (see
+    examples/cure-hydration-products-example.json), but it is merchandise pricing, not API
+    plan pricing, and is deliberately not recorded as a plan here.
+  subscription_offering: https://www.curehydration.com/pages/subscribe
+  wholesale: https://www.curehydration.com/pages/wholesale
+x-evidence:
+  - fetched: '2026-08-11'
+    url: https://www.curehydration.com/agents.md
+    http_status: 200
+    note: 'Documents the full agent surface. No pricing, plan, quota or tier is mentioned anywhere in it.'
+  - fetched: '2026-08-11'
+    url: https://www.curehydration.com/llms.txt
+    http_status: 200

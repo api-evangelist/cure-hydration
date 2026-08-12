@@ -1,0 +1,36 @@
+generated: '2026-08-11'
+method: probed
+source: live anonymous GET against https://www.curehydration.com
+summary: >-
+  Real, unedited responses captured from Cure Hydration's public storefront JSON endpoints on
+  2026-08-11. These are the concrete payload shapes an agent gets, saved because the provider
+  publishes no OpenAPI, no schema, and no example responses of its own.
+examples:
+  - file: cure-hydration-meta-example.json
+    request: 'GET https://www.curehydration.com/meta.json'
+    http_status: 200
+    content_type: application/json; charset=utf-8
+    describes: Shop
+    note: '44 published products, 22 published collections, USD, ships to 200+ countries.'
+  - file: cure-hydration-products-example.json
+    request: 'GET https://www.curehydration.com/products.json?limit=3'
+    http_status: 200
+    content_type: application/json; charset=utf-8
+    describes: Product, ProductVariant, Image, ProductOption
+    note: 'Prices are decimal strings here, unlike the MCP surface which uses integer minor units.'
+  - file: cure-hydration-collections-example.json
+    request: 'GET https://www.curehydration.com/collections.json'
+    http_status: 200
+    content_type: application/json; charset=utf-8
+    describes: Collection
+    note: 'All 22 published collections with handles, descriptions and products_count.'
+not_captured:
+  - surface: 'POST /api/ucp/mcp tools/call'
+    reason: >-
+      Tool invocation requires a resolvable UCP agent profile URI, which the pipeline does not
+      publish. The tool set and its full input schemas ARE captured verbatim in
+      mcp/cure-hydration-tools-list.json; only response bodies are missing.
+  - surface: 'checkout / cart / order responses'
+    reason: >-
+      Deliberately not exercised. Creating carts or checkouts against a live merchant is not a
+      read, and the store's own robots.txt asks agents not to automate that path.

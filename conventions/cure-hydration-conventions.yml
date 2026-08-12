@@ -1,0 +1,141 @@
+generated: '2026-08-11'
+method: derived
+source: mcp/cure-hydration-tools-list.json + graphql/cure-hydration-storefront.graphql + live response headers + https://www.curehydration.com/agents.md
+summary: >-
+  Cross-cutting runtime semantics for the machine surfaces served on curehydration.com.
+  Every rule below is read out of a live response, a live tool inputSchema, or the store's
+  own agents.md / llms.txt — Cure publishes no conventions document of its own.
+
+auth:
+  style: 'three-tier — anonymous read, agent-profile-gated MCP tool calls, OIDC for shopper identity'
+  artifact: authentication/cure-hydration-authentication.yml
+
+idempotency:
+  supported: true
+  surfaces:
+    - surface: 'MCP — complete_checkout'
+      mechanism: request body
+      key: 'meta["idempotency-key"]'
+      required: true
+      scope: per checkout completion
+      description: 'An idempotency key for completing the checkout.'
+      source: mcp/cure-hydration-tools-list.json (live tools/list inputSchema)
+      note: >-
+        This is the strongest runtime-semantics signal on the whole surface: the one
+        irreversible operation — taking the buyer's money — is the one operation where the
+        key is a REQUIRED field, not an optional header.
+    - surface: 'GraphQL — shopPayPaymentRequestSessionSubmit'
+      mechanism: mutation argument
+      key: 'idempotencyKey: String!'
+      required: true
+      scope: per payment transaction
+      description: Ensures the payment transaction occurs only once, preventing duplicate charges.
+      replay_error: IDEMPOTENCY_KEY_ALREADY_USED
+      source: graphql/cure-hydration-storefront.graphql
+  not_supported_on:
+    - 'MCP cart tools (create_cart, update_cart) — no idempotency key in their inputSchema'
+    - 'MCP create_checkout / update_checkout — key is required only on complete_checkout'
+  retention: not published
+
+pagination:
+  - surface: graphql
+    style: cursor
+    spec: GraphQL Cursor Connections
+    params: [first, last, after, before, reverse, sortKey]
+    response_fields: [edges, node, cursor, pageInfo.hasNextPage, pageInfo.hasPreviousPage, pageInfo.startCursor, pageInfo.endCursor]
+    note: 30 connection types in the SDL carry PageInfo.
+  - surface: storefront-json
+    style: page-and-limit
+    params: [limit, page]
+    example: 'GET /products.json?limit=3'
+    note: Verified against /products.json on 2026-08-11.
+  - surface: mcp
+    style: not published
+    note: search_catalog does not expose a cursor or page parameter in its inputSchema.
+
+money:
+  representation: 'integer minor units + ISO 4217 currency code'
+  shape: '{"amount": 600, "currency": "USD"}  // = $6.00'
+  zero_decimal_note: 'Zero-decimal currencies such as JPY are already whole units.'
+  source: 'repeated verbatim in every MCP checkout/cart tool description'
+  storefront_json_note: >-
+    The read-only storefront JSON endpoints do NOT follow this rule — /products.json returns
+    price as a decimal string ("39.00"). The two surfaces disagree on money representation,
+    which is a real integration hazard.
+
+identifiers:
+  style: 'Shopify global object identifiers'
+  format: 'gid://shopify/<Type>/<id>'
+  examples:
+    - 'gid://shopify/Checkout/abc123'
+  storefront_json_note: '/products.json and /collections.json return bare numeric ids instead (e.g. 7952864772345).'
+
+buyer_context:
+  required_for_accuracy: true
+  fields:
+    - context.address_country
+    - context.currency
+  reason: Accurate pricing and availability.
+  source: https://www.curehydration.com/llms.txt
+
+request_tracing:
+  header: x-request-id
+  observed: '5a97d487-43aa-4aee-a87d-703810143715-1786497721'
+  also:
+    - header: server-timing
+      note: 'Carries requestID, edge POP, ASN, country and db timings — an unusually rich runtime trace for an unauthenticated storefront response.'
+    - header: etag
+      note: 'Weak validator on the JSON endpoints, e.g. W/"page_cache:7323713602:ProductListController:..." — conditional GET is available to agents.'
+  probed: '2026-08-11'
+
+versioning:
+  - surface: ucp
+    style: date
+    current: '2026-04-08'
+    also_supported: ['2026-01-23']
+    negotiation: 'Version-specific documents at /.well-known/ucp/{version}'
+  - surface: graphql
+    style: 'date-based API version in the path'
+    example: '/api/2026-04/graphql.json'
+    note: 'The publicApiVersions query enumerates supported versions.'
+  - surface: mcp
+    protocolVersion: '2024-11-05'
+    note: 'Returned by initialize. Older than the UCP version the same server advertises.'
+  - surface: storefront-json
+    style: unversioned
+    note: '/products.json, /collections.json and /meta.json carry no version segment and no deprecation signal.'
+
+rate_limiting:
+  documented: true
+  quantified: false
+  artifact: rate-limits/cure-hydration-rate-limits.yml
+  runtime_signals:
+    - header: shopify-complexity-score
+      observed: '1490'
+    - header: shopify-complexity-score-v2
+      observed: '149'
+    - field: 'extensions.cost.requestedQueryCost (GraphQL response body)'
+      observed: 3
+  exhaustion_status: 429
+
+error_envelope:
+  artifact: errors/cure-hydration-problem-types.yml
+  mcp: 'JSON-RPC 2.0 error object with vendor slug in data.code and a human continue_url'
+  graphql: 'errors[] with message; userErrors on mutation payloads'
+  rfc9457: false
+
+agent_policy:
+  human_approval_required_for: [checkout, payment, order placement]
+  prohibited: ['scripted form fills', 'browser automation that finalizes payment', 'end-to-end agent flows that complete payment without contemporaneous human approval']
+  sanctioned_paths: ['UCP/MCP endpoints', 'https://shop.app/SKILL.md']
+  source: https://www.curehydration.com/robots.txt
+  note: >-
+    This is a policy stated in robots.txt and llms.txt, not enforced in the contract. The
+    MCP surface exposes complete_checkout to any caller with a resolvable agent profile.
+
+cross_links:
+  errors: errors/cure-hydration-problem-types.yml
+  lifecycle: lifecycle/cure-hydration-lifecycle.yml
+  authentication: authentication/cure-hydration-authentication.yml
+  scopes: scopes/cure-hydration-scopes.yml
+  rate_limits: rate-limits/cure-hydration-rate-limits.yml

@@ -1,0 +1,164 @@
+generated: '2026-08-11'
+method: derived
+source: graphql/cure-hydration-storefront.graphql + mcp/cure-hydration-tools-list.json + examples/cure-hydration-products-example.json
+summary: >-
+  Entity graph for the commerce surface served on curehydration.com, derived from the live
+  Storefront GraphQL SDL, the live MCP tool inputSchemas, and the observed shape of
+  /products.json. Identifiers on the GraphQL/MCP surfaces are Shopify global ids
+  (gid://shopify/<Type>/<id>); the read-only JSON endpoints return bare numeric ids for the
+  same objects.
+
+id_format:
+  graphql_and_mcp: 'gid://shopify/<Type>/<id>'
+  storefront_json: 'bare integer'
+  example_type_prefixes:
+    - 'gid://shopify/Checkout/'
+    - 'gid://shopify/Product/'
+    - 'gid://shopify/ProductVariant/'
+    - 'gid://shopify/Collection/'
+    - 'gid://shopify/Cart/'
+    - 'gid://shopify/Order/'
+
+entities:
+  - name: Shop
+    surfaces: [graphql, storefront-json]
+    description: The merchant itself. /meta.json returns id, name, city, currency, domain, myshopify_domain, ships_to_countries, published counts.
+    fields_observed: [id, name, city, province, country, currency, domain, url, myshopify_domain, description, ships_to_countries, money_format, published_collections_count, published_products_count]
+  - name: Product
+    surfaces: [graphql, mcp, storefront-json]
+    description: A sellable item. 44 published on this store as of 2026-08-11.
+    fields_observed: [id, title, handle, body_html, published_at, created_at, updated_at, vendor, product_type, tags, variants, images, options]
+  - name: ProductVariant
+    surfaces: [graphql, mcp, storefront-json]
+    fields_observed: [id, title, option1, option2, option3, sku, requires_shipping, taxable, featured_image, available, price, grams, compare_at_price, position, product_id, created_at, updated_at]
+  - name: ProductOption
+    surfaces: [graphql, storefront-json]
+    fields_observed: [name, position, values]
+  - name: Image
+    surfaces: [graphql, storefront-json]
+    fields_observed: [id, created_at, position, updated_at, product_id, variant_ids, src, width, height]
+  - name: Collection
+    surfaces: [graphql, storefront-json]
+    description: A curated product grouping. 22 published.
+    fields_observed: [id, title, handle, description, published_at, updated_at, image, products_count]
+  - name: Cart
+    surfaces: [graphql, mcp]
+    description: Pre-purchase line-item container. MCP models it with create/get/update/cancel; GraphQL with cartCreate and 20+ cart* mutations.
+  - name: CartLine
+    surfaces: [graphql, mcp]
+  - name: Checkout
+    surfaces: [mcp]
+    description: >-
+      First-class in UCP/MCP (create/get/update/complete/cancel). NOT a first-class object in
+      the current Storefront GraphQL API, where completion runs through cartSubmitForCompletion.
+  - name: Order
+    surfaces: [mcp, customer-account-api]
+    description: Readable via the MCP get_order tool; not present in the Storefront GraphQL API, which reaches orders only via the Customer Account API.
+  - name: Customer
+    surfaces: [graphql, oidc]
+    description: Shopper identity. Managed through customer* GraphQL mutations and Shopify Customer Accounts OIDC.
+  - name: MailingAddress
+    surfaces: [graphql, mcp]
+  - name: PaymentInstrument
+    surfaces: [mcp]
+    description: 'Declared in the create_checkout inputSchema — id, handler_id, type (card | token), billing_address.'
+    handlers: [com.google.pay, dev.shopify.card, dev.shopify.shop_pay]
+  - name: DeliveryOption
+    surfaces: [graphql, mcp]
+    note: 'UCP fulfillment capability declares allows_multi_destination.shipping = false and a single shipping method combination.'
+  - name: Discount
+    surfaces: [graphql, mcp]
+  - name: Article
+    surfaces: [graphql]
+    description: Blog post. GraphQL-only — no MCP tool reaches editorial content.
+  - name: Blog
+    surfaces: [graphql]
+  - name: Page
+    surfaces: [graphql]
+  - name: Metaobject
+    surfaces: [graphql]
+  - name: Menu
+    surfaces: [graphql]
+
+relationships:
+  - from: Shop
+    to: Product
+    type: has_many
+    via: products
+  - from: Shop
+    to: Collection
+    type: has_many
+    via: collections
+  - from: Product
+    to: ProductVariant
+    type: has_many
+    via: variants
+  - from: ProductVariant
+    to: Product
+    type: belongs_to
+    via: product_id
+  - from: Product
+    to: Image
+    type: has_many
+    via: images
+  - from: Image
+    to: Product
+    type: belongs_to
+    via: product_id
+  - from: Image
+    to: ProductVariant
+    type: has_many
+    via: variant_ids
+  - from: Product
+    to: ProductOption
+    type: has_many
+    via: options
+  - from: Collection
+    to: Product
+    type: has_many
+    via: products
+  - from: Cart
+    to: CartLine
+    type: has_many
+    via: lines
+  - from: CartLine
+    to: ProductVariant
+    type: belongs_to
+    via: merchandise
+  - from: Checkout
+    to: Cart
+    type: has_one
+    via: cart
+  - from: Checkout
+    to: PaymentInstrument
+    type: has_many
+    via: payment.instruments
+  - from: Checkout
+    to: DeliveryOption
+    type: has_many
+    via: fulfillment
+  - from: Checkout
+    to: Order
+    type: has_one
+    via: 'complete_checkout result (order id)'
+  - from: Order
+    to: Customer
+    type: belongs_to
+    via: customer
+  - from: Customer
+    to: MailingAddress
+    type: has_many
+    via: addresses
+  - from: Blog
+    to: Article
+    type: has_many
+    via: articles
+
+notes:
+  - >-
+    The MCP surface and the GraphQL surface disagree on where checkout lives: UCP restores a
+    first-class Checkout entity that the current Storefront GraphQL API does not have. An
+    agent that models the domain from GraphQL alone will not find it.
+  - >-
+    Money is an integer minor-unit + currency pair on the MCP surface and a decimal string on
+    /products.json. Any entity mapping across both must normalize.

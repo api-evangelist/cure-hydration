@@ -1,0 +1,55 @@
+generated: '2026-08-11'
+method: probed
+source: https://www.curehydration.com/.well-known/openid-configuration
+summary: >-
+  Four OAuth 2.0 / OpenID Connect scopes are advertised in the authorization-server metadata
+  served under Cure Hydration's own apex domain. They are the Shopify Customer Accounts
+  scope set for this store (shop id 7323713602). Cure publishes no scope reference page of
+  its own; the descriptions below are read from the OIDC/OAuth metadata plus Shopify's
+  platform documentation and are marked accordingly.
+issuer: https://shopify.com/authentication/7323713602
+authorization_endpoint: https://shopify.com/authentication/7323713602/oauth/authorize
+token_endpoint: https://shopify.com/authentication/7323713602/oauth/token
+flows:
+  - authorization_code
+  - refresh_token
+  - 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+pkce_required_methods: [S256]
+docs: https://shopify.dev/docs/api/customer
+scope_count: 4
+scopes:
+  - name: openid
+    description: Standard OpenID Connect scope. Requests an ID token identifying the signed-in shopper.
+    standard: true
+    source: openid-configuration scopes_supported
+  - name: email
+    description: Releases the shopper's email address and email_verified claim into the ID token.
+    standard: true
+    source: openid-configuration scopes_supported
+  - name: 'customer-account-api:full'
+    description: >-
+      Full access to the Shopify Customer Account API on behalf of the signed-in shopper —
+      orders, addresses, subscriptions, and profile.
+    standard: false
+    source: openid-configuration scopes_supported
+  - name: 'customer-account-mcp-api:full'
+    description: >-
+      Full access to the Shopify Customer Account MCP API — the authenticated, shopper-scoped
+      counterpart to the anonymous UCP commerce MCP server at /api/ucp/mcp. This is the scope
+      an agent needs to read a specific buyer's orders rather than the public catalog.
+    standard: false
+    source: openid-configuration scopes_supported
+notes:
+  - >-
+    These scopes govern shopper identity, not developer access. There is no partner, admin,
+    or integrator scope surface published for this store.
+  - >-
+    The presence of customer-account-mcp-api:full is the notable finding: the store advertises
+    an authenticated, per-buyer MCP surface alongside the anonymous commerce one.
+x-evidence:
+  - fetched: '2026-08-11'
+    url: https://www.curehydration.com/.well-known/openid-configuration
+    http_status: 200
+  - fetched: '2026-08-11'
+    url: https://www.curehydration.com/.well-known/oauth-authorization-server
+    http_status: 200

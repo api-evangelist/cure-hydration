@@ -1,0 +1,33 @@
+generated: '2026-08-11'
+method: searched
+source: https://www.curehydration.com/agents.md
+summary: >-
+  Cure Hydration publishes its own agent instructions at /agents.md — served as text/markdown,
+  mirrored at /llms.txt, referenced from robots.txt, and listed in a dedicated
+  /sitemap_agentic_discovery.xml whose only entry is that file. That verbatim document is the
+  primary skill here. The two packaged skills below are generated from it plus the live MCP
+  tool list, grounded only in tool names returned by tools/list on 2026-08-11.
+skills:
+  - file: cure-hydration-agents.md
+    name: agents-md
+    title: 'Agent Instructions — CURE (provider-published, verbatim)'
+    method: searched
+    source: https://www.curehydration.com/agents.md
+    http_status: 200
+    content_type: 'text/markdown; charset=utf-8'
+    api: cure-hydration-ucp-mcp
+    note: >-
+      Saved byte-for-byte as served. Covers the UCP flow, the read-only browsing endpoints,
+      the buyer-approval rule, and the store policy links.
+  - file: cure-hydration-browse-catalog.md
+    name: browse-catalog
+    title: Read the CURE catalog without transacting
+    method: generated
+    source: 'skills/cure-hydration-agents.md + mcp/cure-hydration-tools-list.json'
+    api: cure-hydration-ucp-mcp
+  - file: cure-hydration-agentic-purchase.md
+    name: agentic-purchase
+    title: Buy from CURE on a shopper's behalf over UCP/MCP
+    method: generated
+    source: 'skills/cure-hydration-agents.md + mcp/cure-hydration-tools-list.json'
+    api: cure-hydration-ucp-mcp

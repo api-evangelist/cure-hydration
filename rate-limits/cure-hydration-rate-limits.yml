@@ -1,0 +1,58 @@
+generated: '2026-08-11'
+method: probed
+source: 'https://www.curehydration.com/llms.txt + live response headers on /products.json and /api/2026-04/graphql.json'
+summary: >-
+  Rate limiting is acknowledged but never quantified. The store's llms.txt tells agents the
+  MCP endpoint is rate-limited per IP and to back off on 429, and gives no number, window,
+  or burst. What IS available is a live cost signal on every response, which is the more
+  useful runtime input for an agent — recorded below.
+limit_count: 0
+limit_count_note: >-
+  Zero published numeric limits. This is an honest zero, not an unchecked field: llms.txt
+  states the existence of a per-IP limit on /api/ucp/mcp without stating its value, and no
+  Retry-After or RateLimit-* header was returned on any probed response.
+documented: true
+docs: https://www.curehydration.com/llms.txt
+
+limits: []
+
+runtime_signals:
+  - header: shopify-complexity-score
+    surface: 'GET /products.json'
+    observed_value: '1490'
+    probed: '2026-08-11'
+    note: Per-response cost, not a remaining-quota counter.
+  - header: shopify-complexity-score-v2
+    surface: 'GET /products.json'
+    observed_value: '149'
+    probed: '2026-08-11'
+  - field: extensions.cost.requestedQueryCost
+    surface: 'POST /api/2026-04/graphql.json'
+    observed_value: 3
+    probed: '2026-08-11'
+    note: >-
+      The GraphQL response body returns the cost of the query just executed. Shopify's
+      Storefront API normally also returns throttleStatus (maximumAvailable / currentlyAvailable
+      / restoreRate); only requestedQueryCost was present on the anonymous probe.
+
+headers_absent:
+  - RateLimit-Limit
+  - RateLimit-Remaining
+  - RateLimit-Reset
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - Retry-After
+headers_absent_note: 'None of the standard rate-limit headers appeared on any 200 response probed on 2026-08-11.'
+
+exhaustion:
+  status_code: 429
+  scope: per source IP
+  surface: 'POST /api/ucp/mcp'
+  behavior: 'Back off on 429 responses.'
+  source: https://www.curehydration.com/llms.txt
+  observed: false
+  observed_note: Not reproduced — the pipeline does not deliberately exhaust a provider's limits.
+
+gaps:
+  - No numeric limit, window, or burst is published for any surface.
+  - No RateLimit-* or Retry-After header on the responses probed, so an agent has no forward-looking budget signal — only a cost-of-last-request signal.

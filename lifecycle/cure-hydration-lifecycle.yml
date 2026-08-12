@@ -1,0 +1,77 @@
+generated: '2026-08-11'
+method: derived
+source: 'https://www.curehydration.com/.well-known/ucp + graphql/cure-hydration-storefront.graphql + MCP initialize'
+summary: >-
+  Cure Hydration publishes no versioning policy, no deprecation policy, no SLA, no status
+  page and no changelog of its own. What versioning exists is inherited from the platform
+  and is visible in the contracts themselves: UCP negotiates two dated protocol versions,
+  the GraphQL endpoint is date-versioned in its path, and the SDL carries explicit
+  @deprecated annotations. The read-only storefront JSON endpoints carry no version at all.
+
+versioning:
+  first_party_policy: false
+  surfaces:
+    - surface: ucp
+      scheme: date
+      current: '2026-04-08'
+      supported:
+        - version: '2026-04-08'
+          document: https://cure-hydration.myshopify.com/.well-known/ucp/2026-04-08
+          status: latest stable
+        - version: '2026-01-23'
+          document: https://cure-hydration.myshopify.com/.well-known/ucp/2026-01-23
+          status: supported
+      negotiation: Version-pinned discovery documents; capabilities declare requires.protocol.min.
+    - surface: graphql
+      scheme: date-in-path
+      example: /api/2026-04/graphql.json
+      enumerable_via: 'publicApiVersions query'
+    - surface: mcp
+      scheme: MCP protocol revision
+      current: '2024-11-05'
+      note: Returned by initialize. Lags the 2026-04-08 UCP version the same endpoint advertises.
+    - surface: storefront-json
+      scheme: none
+      note: '/products.json, /collections.json and /meta.json are unversioned and carry no deprecation signal.'
+
+deprecation:
+  policy_published: false
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  in_contract:
+    graphql_deprecated_annotations: true
+    note: >-
+      The Storefront SDL uses GraphQL's own @deprecated directive with reasons on fields and
+      enum values, so a client can detect deprecation by introspection. That is contract-level
+      signalling, not a published policy — and it comes from Shopify, not from Cure.
+
+status_page:
+  first_party: false
+  url: null
+  note: >-
+    Cure operates no status page. The store runs on Shopify, whose platform status page exists
+    at shopifystatus.com, but that is not Cure's page and is deliberately not claimed here.
+
+sla:
+  published: false
+
+support_response_time:
+  channel: email
+  address: hi@curehydration.com
+  hours: 'Monday-Friday, 9:00am - 6:00pm ET'
+  stated_response: 'Allow 24 hours'
+  source: https://www.curehydration.com/pages/contact
+  note: Customer support for shoppers. There is no developer or integrator support channel.
+
+changelog:
+  published: false
+  note: No dated changelog, release notes, or version history for any surface.
+
+gaps:
+  - No deprecation policy and no Sunset/Deprecation headers on any surface.
+  - No status page and no SLA.
+  - >-
+    The unversioned storefront JSON endpoints are the ones agents are most likely to consume,
+    and they are the ones with no change signal whatsoever.

@@ -1,23 +1,168 @@
 aid: cure-hydration
+x-enrichment:
+  date: '2026-08-11'
+  status: enriched
+  artifacts_added: 28
+  pass: local-v1
+x-coverage:
+  state: covered
 name: Cure Hydration
-description: 'Cure Hydration is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Cure Hydration (CURE) is a New York based direct-to-consumer beverage brand founded in 2019
+  by Lauren Picasso, selling plant-based electrolyte drink mixes built on the World Health
+  Organization's Oral Rehydration Solution formula — organic coconut water, pink Himalayan
+  salt, no added sugar. It is not a software company and it runs no developer programme, but
+  its Shopify storefront serves a substantive first-party machine surface: a live Universal
+  Commerce Protocol (UCP 2026-04-08) MCP server at /api/ucp/mcp with 13 catalog, cart,
+  checkout and order tools, an anonymously introspectable Storefront GraphQL API, agent
+  instructions at /agents.md and /llms.txt, a dedicated agent-discovery sitemap, and OpenID
+  Connect discovery for shopper accounts. This profile records that surface as probed.
+image: https://www.curehydration.com/cdn/shop/files/cure-logo1.jpg?v=1646413004
 url: https://raw.githubusercontent.com/api-evangelist/cure-hydration/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-11'
 modified: '2026-08-11'
 tags:
 - Company
-apis: []
+- Consumer Packaged Goods
+- Beverages
+- Health and Wellness
+- Ecommerce
+- Direct to Consumer
+- Retail
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- Model Context Protocol
+- GraphQL
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- name: CURE Universal Commerce Protocol (UCP) MCP Server
+  description: >-
+    A live, first-party, anonymously discoverable Model Context Protocol server implementing
+    the Shopify Universal Commerce Protocol shopping service for the CURE storefront. Thirteen
+    tools cover catalog search and lookup, product detail, cart create/read/update/cancel, and
+    checkout create/read/update/complete/cancel plus order read. tools/list and initialize
+    answer without credentials; tool invocation requires a resolvable UCP agent profile URI,
+    and complete_checkout additionally requires an idempotency key.
+  humanURL: https://www.curehydration.com/agents.md
+  baseURL: https://www.curehydration.com/api/ucp/mcp
+  tags:
+  - MCP
+  - Agentic Commerce
+  - UCP
+  - Checkout
+  - Catalog
+  properties:
+  - type: MCPServer
+    url: mcp/cure-hydration-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/cure-hydration-tool-crosswalk.yml
+  - type: Documentation
+    url: https://www.curehydration.com/agents.md
+  - type: LLMsTxt
+    url: llms/cure-hydration-llms.txt
+- name: CURE Storefront GraphQL API
+  description: >-
+    The Shopify Storefront GraphQL API served on Cure Hydration's own apex domain, pinned to
+    API version 2026-04. Full introspection answered anonymously on 2026-08-11 — 416 types, 35
+    root queries and 41 mutations covering products, collections, carts, customer accounts,
+    blog content and Shop Pay payment request sessions.
+  humanURL: https://www.curehydration.com/agents.md
+  baseURL: https://www.curehydration.com/api/2026-04/graphql.json
+  tags:
+  - GraphQL
+  - Storefront
+  - Ecommerce
+  properties:
+  - type: GraphQL
+    url: graphql/cure-hydration-storefront.graphql
+  - type: APIReference
+    url: graphql/cure-hydration-graphql.yml
+  - type: Documentation
+    url: https://shopify.dev/docs/api/storefront
+- name: CURE Storefront JSON Endpoints
+  description: >-
+    Read-only, unauthenticated JSON endpoints the store documents for agents in /agents.md —
+    product list, product detail by handle, collection list, collection products, store
+    metadata and search. Unversioned, page-and-limit paginated, ETag-validated.
+  humanURL: https://www.curehydration.com/agents.md
+  baseURL: https://www.curehydration.com
+  tags:
+  - REST
+  - Catalog
+  - Ecommerce
+  properties:
+  - type: Examples
+    url: examples/_index.yml
+  - type: Documentation
+    url: https://www.curehydration.com/agents.md
 common:
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.curehydration.com
+- type: Documentation
+  url: https://www.curehydration.com/agents.md
+- type: APIReference
+  url: https://www.curehydration.com/llms.txt
+- type: GettingStarted
+  url: skills/cure-hydration-browse-catalog.md
+- type: Support
+  url: https://www.curehydration.com/pages/contact
+- type: HelpCenter
+  url: https://www.curehydration.com/pages/faq
+- type: Blog
+  url: https://www.curehydration.com/blogs/news
+- type: Pricing
+  url: https://www.curehydration.com/collections/shop-all
+- type: SignUp
+  url: https://www.curehydration.com/account/login
+- type: TermsOfService
+  url: https://www.curehydration.com/policies/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.curehydration.com/policies/privacy-policy
+- type: About
+  url: https://www.curehydration.com/pages/about-us
+- type: LLMsTxt
+  url: llms/cure-hydration-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: MCPServer
+  url: mcp/cure-hydration-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/cure-hydration-tool-crosswalk.yml
+- type: GraphQL
+  url: graphql/cure-hydration-storefront.graphql
+- type: WellKnown
+  url: well-known/cure-hydration-well-known.yml
+- type: OpenIDConnect
+  url: well-known/cure-hydration-openid-configuration.json
+- type: Authentication
+  url: authentication/cure-hydration-authentication.yml
+- type: OAuthScopes
+  url: scopes/cure-hydration-scopes.yml
+- type: Conventions
+  url: conventions/cure-hydration-conventions.yml
+- type: Idempotency
+  url: conventions/cure-hydration-conventions.yml
+- type: ErrorCatalog
+  url: errors/cure-hydration-problem-types.yml
+- type: RateLimits
+  url: rate-limits/cure-hydration-rate-limits.yml
+- type: Plans
+  url: plans/cure-hydration-plans-pricing.yml
+- type: Lifecycle
+  url: lifecycle/cure-hydration-lifecycle.yml
+- type: Conformance
+  url: conformance/cure-hydration-conformance.yml
+- type: DataModel
+  url: data-model/cure-hydration-data-model.yml
+- type: Examples
+  url: examples/_index.yml
+- type: DomainSecurity
+  url: security/cure-hydration-domain-security.yml

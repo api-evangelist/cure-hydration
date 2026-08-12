@@ -1,0 +1,77 @@
+generated: '2026-08-11'
+method: probed
+source: live probes of https://www.curehydration.com/.well-known/*
+host: www.curehydration.com
+probed: '2026-08-11'
+summary: >-
+  Three .well-known documents are served and real. The UCP merchant profile is the
+  agent-commerce discovery document; the OIDC and OAuth authorization-server metadata are
+  Shopify Customer Accounts, issued under this store's own shop id (7323713602) but hosted
+  on shopify.com. security.txt, api-catalog, ai-plugin.json and both agent-card paths 404
+  with the storefront's HTML 404 page.
+
+paths:
+  - path: /.well-known/ucp
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: cure-hydration-ucp.json
+    document: true
+    note: >-
+      Universal Commerce Protocol merchant profile. Declares version 2026-04-08 (plus
+      2026-01-23), the dev.ucp.shopping service over MCP and embedded transports, eight
+      capabilities, and three payment handlers (Google Pay, Shopify card, Shop Pay).
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: cure-hydration-openid-configuration.json
+    document: true
+    note: >-
+      Shopify Customer Accounts OIDC discovery. issuer https://shopify.com/authentication/7323713602.
+      Authorization code + refresh token + JWT bearer grants, PKCE S256, RS256 id tokens.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: cure-hydration-oauth-authorization-server.json
+    document: true
+    note: RFC 8414 authorization server metadata. Byte-identical payload to the OIDC document.
+  - path: /.well-known/security.txt
+    status: 404
+    document: false
+  - path: /.well-known/api-catalog
+    status: 404
+    document: false
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    document: false
+  - path: /.well-known/agent-card.json
+    status: 404
+    document: false
+    note: No A2A agent card. Also 404 on cure-hydration.myshopify.com.
+  - path: /.well-known/agent.json
+    status: 404
+    document: false
+    note: Legacy pre-0.3 A2A path. Also 404 on cure-hydration.myshopify.com.
+
+other_agent_surfaces:
+  - path: /llms.txt
+    status: 200
+    file: llms/cure-hydration-llms.txt
+  - path: /agents.md
+    status: 200
+    file: skills/cure-hydration-agents.md
+  - path: /robots.txt
+    status: 200
+    note: Carries an agent-directed comment header naming /agents.md and the UCP/MCP endpoint.
+  - path: /sitemap_agentic_discovery.xml
+    status: 200
+    note: Dedicated agent-discovery sitemap; single entry, /agents.md.
+
+gaps:
+  - >-
+    No /.well-known/security.txt. RFC 9116 is the cheapest agent- and researcher-facing
+    signal a storefront can publish and it is absent; hi@curehydration.com is the only
+    reachable contact and it is a customer-support address.
+  - >-
+    No /.well-known/api-catalog (RFC 9727). The store does publish an agent surface, so a
+    catalog document pointing at /agents.md, /.well-known/ucp and /api/ucp/mcp would be
+    trivially derivable from what already exists.

@@ -1,0 +1,65 @@
+generated: '2026-08-11'
+method: probed
+source: https://www.curehydration.com/api/2026-04/graphql.json
+name: CURE Storefront GraphQL API
+endpoint: https://www.curehydration.com/api/2026-04/graphql.json
+alternate_endpoint: https://cure-hydration.myshopify.com/api/2026-04/graphql.json
+sdl: cure-hydration-storefront.graphql
+api_version: '2026-04'
+platform: 'Shopify Storefront API'
+introspection:
+  enabled: true
+  authenticated: false
+  probed: '2026-08-11'
+  http_status: 200
+  response_bytes: 759966
+  note: >-
+    Full introspection answered anonymously with no X-Shopify-Storefront-Access-Token header.
+    The documented credential for this API is a storefront access token; it was not required
+    for introspection on this store.
+counts:
+  types: 416
+  queries: 35
+  mutations: 41
+  subscriptions: 0
+  connection_types: 30
+root_queries:
+  [article, articles, blog, blogByHandle, blogs, cart, cartCompletionAttempt, collection,
+   collectionByHandle, collections, customer, localization, locations, menu, metaobject,
+   metaobjects, node, nodes, page, pageByHandle, pages, paymentSettings, predictiveSearch,
+   product, productByHandle, productRecommendations, productTags, productTypes, products,
+   publicApiVersions, search, shop, shopPayInstallmentsPricing, sitemap, urlRedirects]
+mutation_groups:
+  cart: [cartAttributesUpdate, cartBillingAddressUpdate, cartBuyerIdentityUpdate, cartClone,
+         cartCreate, cartDeliveryAddressesAdd, cartDeliveryAddressesRemove,
+         cartDeliveryAddressesReplace, cartDeliveryAddressesUpdate, cartDiscountCodesUpdate,
+         cartGiftCardCodesAdd, cartGiftCardCodesRemove, cartGiftCardCodesUpdate, cartLinesAdd,
+         cartLinesRemove, cartLinesUpdate, cartMetafieldDelete, cartMetafieldsSet,
+         cartNoteUpdate, cartPaymentUpdate, cartPrepareForCompletion, cartRemovePersonalData,
+         cartSelectedDeliveryOptionsUpdate, cartSubmitForCompletion]
+  customer: [customerAccessTokenCreate, customerAccessTokenCreateWithMultipass,
+             customerAccessTokenDelete, customerAccessTokenRenew, customerActivate,
+             customerActivateByUrl, customerAddressCreate, customerAddressDelete,
+             customerAddressUpdate, customerCreate, customerDefaultAddressUpdate,
+             customerRecover, customerReset, customerResetByUrl, customerUpdate]
+  shop_pay: [shopPayPaymentRequestSessionCreate, shopPayPaymentRequestSessionSubmit]
+notes:
+  - >-
+    This is Shopify's Storefront schema as served on Cure Hydration's own apex domain and
+    pinned to the 2026-04 API version. Cure did not author it, and Cure links no GraphQL
+    documentation of its own — but it is a live, anonymously introspectable, machine-readable
+    contract at a first-party URL, and it is the richest one this provider serves.
+  - >-
+    The crosswalk in mcp/cure-hydration-tool-crosswalk.yml records where this surface and the
+    UCP/MCP tool surface diverge — most notably that 33 GraphQL root fields have no MCP tool
+    and that Checkout is a first-class UCP object with no GraphQL equivalent.
+x-evidence:
+  - fetched: '2026-08-11'
+    url: https://www.curehydration.com/api/2026-04/graphql.json
+    method: 'POST {__schema{queryType{name}}}'
+    http_status: 200
+    result: '{"data":{"__schema":{"queryType":{"name":"QueryRoot"}}},"extensions":{"cost":{"requestedQueryCost":3}}}'
+  - fetched: '2026-08-11'
+    url: https://www.curehydration.com/api/2026-04/graphql.json
+    method: 'POST full IntrospectionQuery'
+    http_status: 200

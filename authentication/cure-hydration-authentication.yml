@@ -1,0 +1,99 @@
+generated: '2026-08-11'
+method: probed
+source: https://www.curehydration.com/.well-known/openid-configuration
+summary: >-
+  Cure Hydration has no API-key programme and no developer credential of its own. Three
+  distinct access models sit on the domain: fully anonymous read (storefront JSON,
+  GraphQL introspection, MCP tools/list), an agent-identity gate on MCP tool invocation
+  (a resolvable UCP agent profile URI, not a secret), and Shopify Customer Accounts
+  OpenID Connect for shopper login.
+
+schemes:
+  - id: anonymous
+    type: none
+    applies_to:
+      - GET /products.json
+      - GET /products/{handle}.json
+      - GET /collections.json
+      - GET /collections/{handle}/products.json
+      - GET /meta.json
+      - GET /sitemap.xml
+      - POST /api/2026-04/graphql.json (introspection observed 200 with no token)
+      - POST /api/ucp/mcp (initialize, tools/list)
+    note: >-
+      Verified anonymously on 2026-08-11. Full Storefront GraphQL introspection returned
+      416 types with no X-Shopify-Storefront-Access-Token header present.
+
+  - id: ucp-agent-profile
+    type: agentIdentity
+    location: request body
+    parameter: meta["ucp-agent"].profile
+    format: URI
+    applies_to:
+      - POST /api/ucp/mcp (tools/call, resources/list)
+    secret: false
+    note: >-
+      Not a credential. The caller supplies a URI to its own published agent profile and the
+      server fetches it. Omitting it returns JSON-RPC -32001 / invalid_profile_url; supplying
+      an unreachable URI returns -32001 / profile_unreachable over HTTP 422.
+    evidence:
+      url: https://www.curehydration.com/api/ucp/mcp
+      http_status: 422
+      fetched: '2026-08-11'
+
+  - id: shopify-customer-accounts-oidc
+    type: openIdConnect
+    openIdConnectUrl: https://www.curehydration.com/.well-known/openid-configuration
+    issuer: https://shopify.com/authentication/7323713602
+    authorization_endpoint: https://shopify.com/authentication/7323713602/oauth/authorize
+    token_endpoint: https://shopify.com/authentication/7323713602/oauth/token
+    end_session_endpoint: https://shopify.com/authentication/7323713602/logout
+    jwks_uri: https://shopify.com/authentication/7323713602/.well-known/jwks.json
+    grant_types:
+      - authorization_code
+      - refresh_token
+      - 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+    response_types: [code]
+    token_endpoint_auth_methods: [client_secret_basic]
+    pkce: [S256]
+    id_token_signing_alg: [RS256]
+    subject_types: [public]
+    claims: [iss, sub, aud, exp, iat, nonce, sid, email, email_verified]
+    scopes:
+      - openid
+      - email
+      - 'customer-account-api:full'
+      - 'customer-account-mcp-api:full'
+    applies_to:
+      - Shopify Customer Account API
+      - Shopify Customer Account MCP API
+    human_login: https://www.curehydration.com/account/login
+    note: >-
+      Platform-provided. The discovery document is served from Cure's own apex under
+      /.well-known/, but the issuer and all endpoints are Shopify-hosted and scoped to this
+      store's shop id.
+
+  - id: shopify-storefront-access-token
+    type: apiKey
+    location: header
+    parameter: X-Shopify-Storefront-Access-Token
+    applies_to:
+      - POST /api/{version}/graphql.json
+    note: >-
+      The documented credential for the Storefront API. Not required for the introspection
+      and public catalog reads observed here, and Cure publishes no public storefront token
+      and no way to request one — there is no developer portal, no app registration page,
+      and no API terms.
+
+gaps:
+  - No developer account, API key issuance flow, or credential documentation of any kind is published by Cure.
+  - >-
+    The only auth documentation an integrator gets is Shopify's platform documentation at
+    shopify.dev, linked from the store's own /agents.md and /llms.txt. Cure publishes no
+    first-party auth page.
+
+docs:
+  - https://www.curehydration.com/agents.md
+  - https://www.curehydration.com/llms.txt
+  - https://shopify.dev/docs/api/customer
+  - https://shopify.dev/docs/api/storefront

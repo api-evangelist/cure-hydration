@@ -1,0 +1,156 @@
+generated: '2026-08-11'
+method: derived
+source: mcp/cure-hydration-tools-list.json + graphql/cure-hydration-storefront.graphql + skills/cure-hydration-agents.md
+summary: >-
+  Cure Hydration exposes three overlapping-but-non-identical machine surfaces on its own
+  domain: the UCP/MCP tool set (13 tools), the Shopify Storefront GraphQL API (35 queries,
+  41 mutations, introspectable anonymously), and a small set of documented read-only
+  storefront JSON endpoints. There is no OpenAPI, so the `rest` column below names the
+  documented JSON paths rather than operationIds, and confidence is set accordingly.
+
+surfaces:
+  mcp:
+    url: https://www.curehydration.com/api/ucp/mcp
+    gated: partial
+    gate_note: tools/list and initialize are anonymous; tools/call requires a resolvable UCP agent profile URI.
+    artifact: mcp/cure-hydration-mcp.yml
+  graphql:
+    endpoint: https://www.curehydration.com/api/2026-04/graphql.json
+    gated: false
+    gate_note: Full introspection answered 200 anonymously on 2026-08-11.
+    artifact: graphql/cure-hydration-storefront.graphql
+  rest:
+    openapi: null
+    openapi_note: No OpenAPI or Swagger document is published on any host.
+    documented_endpoints:
+      - GET /products.json
+      - GET /products/{handle}.json
+      - GET /collections.json
+      - GET /collections/{handle}/products.json
+      - GET /meta.json
+      - GET /search?q={query}&type=product
+      - GET /sitemap.xml
+    source: https://www.curehydration.com/agents.md
+
+crosswalk:
+  - tool: search_catalog
+    category: catalog
+    graphql: [products, search, predictiveSearch]
+    rest: ['GET /products.json', 'GET /search?q={query}&type=product']
+    binding: semantic
+    confidence: high
+    note: All three surfaces search the same published product catalog; only the MCP tool applies buyer context (country/currency) for pricing.
+  - tool: lookup_catalog
+    category: catalog
+    graphql: [nodes, products]
+    rest: ['GET /products.json']
+    binding: semantic
+    confidence: medium
+    note: Batch identifier lookup. GraphQL `nodes` is the closest equivalent; the JSON endpoint has no by-id filter.
+  - tool: get_product
+    category: catalog
+    graphql: [product, productByHandle, node]
+    rest: ['GET /products/{handle}.json']
+    binding: semantic
+    confidence: high
+  - tool: create_cart
+    category: cart
+    graphql: [cartCreate]
+    rest: []
+    binding: semantic
+    confidence: high
+    note: robots.txt explicitly disallows /cart.js and steers agents to UCP/MCP instead, so there is no sanctioned REST equivalent.
+  - tool: get_cart
+    category: cart
+    graphql: [cart]
+    rest: []
+    binding: semantic
+    confidence: high
+  - tool: update_cart
+    category: cart
+    graphql: [cartLinesAdd, cartLinesUpdate, cartLinesRemove, cartAttributesUpdate, cartNoteUpdate, cartDiscountCodesUpdate, cartBuyerIdentityUpdate]
+    rest: []
+    binding: composite
+    confidence: medium
+    note: One MCP tool fans out to seven GraphQL mutations; the tool is coarser than the GraphQL surface.
+  - tool: cancel_cart
+    category: cart
+    graphql: []
+    rest: []
+    binding: none
+    confidence: low
+    note: The Storefront GraphQL API has no cart-cancel mutation. UCP models cart cancellation explicitly; GraphQL does not.
+  - tool: create_checkout
+    category: checkout
+    graphql: [cartCreate, cartPrepareForCompletion]
+    rest: []
+    binding: composite
+    confidence: medium
+    note: Storefront GraphQL retired the Checkout object; checkout is now cart-completion. UCP re-introduces a first-class checkout.
+  - tool: get_checkout
+    category: checkout
+    graphql: [cart, cartCompletionAttempt]
+    rest: []
+    binding: composite
+    confidence: medium
+  - tool: update_checkout
+    category: checkout
+    graphql: [cartDeliveryAddressesUpdate, cartSelectedDeliveryOptionsUpdate, cartBillingAddressUpdate, cartPaymentUpdate]
+    rest: []
+    binding: composite
+    confidence: medium
+  - tool: complete_checkout
+    category: checkout
+    graphql: [cartSubmitForCompletion]
+    rest: []
+    binding: semantic
+    confidence: medium
+    note: Buyer approval is mandatory on this tool per the store's own robots.txt and llms.txt.
+  - tool: cancel_checkout
+    category: checkout
+    graphql: []
+    rest: []
+    binding: none
+    confidence: low
+  - tool: get_order
+    category: order
+    graphql: []
+    rest: []
+    binding: none
+    confidence: low
+    note: >-
+      Order retrieval is not in the Storefront GraphQL API — it lives in the Customer Account
+      API behind the OIDC scope customer-account-api:full. The MCP tool reaches it via the
+      UCP agent profile instead.
+
+mcp_only:
+  - tool: cancel_cart
+    reason: No cart-cancel mutation exists in the Storefront GraphQL API.
+  - tool: cancel_checkout
+    reason: Checkout is not a first-class object in Storefront GraphQL; there is nothing to cancel there.
+  - tool: get_order
+    reason: Orders are Customer Account API scope, not Storefront API scope.
+
+graphql_only:
+  - fields: [article, articles, blog, blogByHandle, blogs, page, pageByHandle, pages, menu, metaobject, metaobjects]
+    reason: Content surfaces (blog articles, CMS pages, navigation menus, metaobjects) have no UCP tool. Agents must fall back to GraphQL or crawl HTML.
+  - fields: [customerCreate, customerUpdate, customerAccessTokenCreate, customerRecover, customerReset, customerAddressCreate, customerAddressUpdate, customerAddressDelete, customerDefaultAddressUpdate]
+    reason: Customer identity and address book. No UCP tool covers account management.
+  - fields: [localization, locations, paymentSettings, shop, shopPayInstallmentsPricing, urlRedirects, sitemap, publicApiVersions, productRecommendations, productTags, productTypes, collection, collectionByHandle, collections]
+    reason: Store metadata, localization, recommendations and collection browsing have no UCP tool equivalent.
+
+rest_only:
+  - endpoint: GET /meta.json
+    reason: Store profile (name, city, currency, ships_to_countries, published product/collection counts). No MCP tool and no single GraphQL field returns this shape.
+  - endpoint: GET /collections.json
+    reason: Full collection index. UCP has no collection-browse tool.
+
+coverage:
+  mcp_tools: 13
+  graphql_queries: 35
+  graphql_mutations: 41
+  documented_rest_endpoints: 7
+  tools_bound_to_graphql: 10
+  tools_unbound: 3
+  graphql_fields_with_no_tool: 33
+  openapi_operations: 0
