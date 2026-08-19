@@ -3,13 +3,12 @@ method: probed
 source: https://www.curehydration.com/api/ucp/mcp
 name: CURE Universal Commerce Protocol (UCP) MCP Server
 status: live
-description: >-
-  CURE (Cure Hydration) serves a live, first-party, anonymously reachable Model Context
-  Protocol server on its own domain at /api/ucp/mcp. It is the Shopify Universal Commerce
-  Protocol (UCP) shopping service — catalog search, catalog lookup, cart, checkout and
-  order tools — advertised from the store's own /llms.txt, /agents.md, /robots.txt and
-  /.well-known/ucp. tools/list and initialize answer without credentials; tools/call is
-  gated on a resolvable UCP agent profile URI supplied in every request's meta block.
+description: CURE (Cure Hydration) serves a live, first-party, anonymously reachable Model Context Protocol
+  server on its own domain at /api/ucp/mcp. It is the Shopify Universal Commerce Protocol (UCP) shopping
+  service — catalog search, catalog lookup, cart, checkout and order tools — advertised from the store's
+  own /llms.txt, /agents.md, /robots.txt and /.well-known/ucp. tools/list and initialize answer without
+  credentials; tools/call is gated on a resolvable UCP agent profile URI supplied in every request's meta
+  block.
 transport: http
 protocol: mcp
 endpoint: https://www.curehydration.com/api/ucp/mcp
@@ -17,13 +16,11 @@ alternate_endpoint: https://cure-hydration.myshopify.com/api/ucp/mcp
 method_http: POST
 content_type: application/json
 accept: application/json, text/event-stream
-
 server_info:
   name: universal-commerce
   version: 0.1.0
   protocolVersion: '2024-11-05'
   source: MCP initialize response, probed 2026-08-11
-
 server_capabilities:
   tools:
     listChanged: true
@@ -32,155 +29,182 @@ server_capabilities:
   resources:
     listChanged: true
   logging: {}
-
 discovery:
-  - path: /.well-known/ucp
-    url: https://www.curehydration.com/.well-known/ucp
-    status: 200
-    note: UCP merchant profile — versions, service endpoints, capabilities, payment handlers.
-  - path: /llms.txt
-    url: https://www.curehydration.com/llms.txt
-    status: 200
-  - path: /agents.md
-    url: https://www.curehydration.com/agents.md
-    status: 200
-  - path: /robots.txt
-    url: https://www.curehydration.com/robots.txt
-    status: 200
-    note: robots.txt names the UCP/MCP endpoint in a comment header and disallows the AJAX cart surfaces in favor of it.
-  - path: /sitemap_agentic_discovery.xml
-    url: https://www.curehydration.com/sitemap_agentic_discovery.xml
-    status: 200
-    note: A dedicated agent-discovery sitemap whose only entry is /agents.md.
-
+- path: /.well-known/ucp
+  url: https://www.curehydration.com/.well-known/ucp
+  status: 200
+  note: UCP merchant profile — versions, service endpoints, capabilities, payment handlers.
+- path: /llms.txt
+  url: https://www.curehydration.com/llms.txt
+  status: 200
+- path: /agents.md
+  url: https://www.curehydration.com/agents.md
+  status: 200
+- path: /robots.txt
+  url: https://www.curehydration.com/robots.txt
+  status: 200
+  note: robots.txt names the UCP/MCP endpoint in a comment header and disallows the AJAX cart surfaces
+    in favor of it.
+- path: /sitemap_agentic_discovery.xml
+  url: https://www.curehydration.com/sitemap_agentic_discovery.xml
+  status: 200
+  note: A dedicated agent-discovery sitemap whose only entry is /agents.md.
 ucp:
   version: '2026-04-08'
   supported_versions:
-    - '2026-04-08'
-    - '2026-01-23'
+  - '2026-04-08'
+  - '2026-01-23'
   specification: https://ucp.dev/2026-04-08/specification/overview/
   service: dev.ucp.shopping
   service_schema: https://ucp.dev/2026-04-08/services/shopping/mcp.openrpc.json
   transports:
-    - mcp
-    - embedded
+  - mcp
+  - embedded
   capabilities:
-    - dev.ucp.shopping.checkout
-    - dev.ucp.shopping.fulfillment
-    - dev.ucp.shopping.discount
-    - dev.ucp.shopping.cart
-    - dev.ucp.shopping.order
-    - dev.ucp.shopping.catalog.search
-    - dev.ucp.shopping.catalog.lookup
-    - dev.shopify.catalog
+  - dev.ucp.shopping.checkout
+  - dev.ucp.shopping.fulfillment
+  - dev.ucp.shopping.discount
+  - dev.ucp.shopping.cart
+  - dev.ucp.shopping.order
+  - dev.ucp.shopping.catalog.search
+  - dev.ucp.shopping.catalog.lookup
+  - dev.shopify.catalog
   payment_handlers:
-    - com.google.pay
-    - dev.shopify.card
-    - dev.shopify.shop_pay
-
+  - com.google.pay
+  - dev.shopify.card
+  - dev.shopify.shop_pay
 authentication:
   anonymous_methods:
-    - initialize
-    - tools/list
+  - initialize
+  - tools/list
   gated_methods:
-    - tools/call
-    - resources/list
-  gate: >-
-    Every request must carry meta["ucp-agent"].profile — a URI the server fetches to resolve
-    the calling agent. A missing profile returns JSON-RPC error -32001 with
-    data.code "invalid_profile_url"; an unreachable profile returns -32001 /
-    "profile_unreachable" over HTTP 422. This is an agent-identity gate, not a customer
-    credential: no API key or OAuth token is required to enumerate the tool surface.
+  - tools/call
+  - resources/list
+  gate: 'Every request must carry meta["ucp-agent"].profile — a URI the server fetches to resolve the
+    calling agent. A missing profile returns JSON-RPC error -32001 with data.code "invalid_profile_url";
+    an unreachable profile returns -32001 / "profile_unreachable" over HTTP 422. This is an agent-identity
+    gate, not a customer credential: no API key or OAuth token is required to enumerate the tool surface.'
   buyer_approval_required: true
-  buyer_approval_note: >-
-    The store's own robots.txt and llms.txt both state that checkout, payment, and order
-    placement must not be completed without explicit, contemporaneous human approval.
-
+  buyer_approval_note: The store's own robots.txt and llms.txt both state that checkout, payment, and
+    order placement must not be completed without explicit, contemporaneous human approval.
 tools_source: mcp/cure-hydration-tools-list.json
 tool_count: 13
 tools:
-  - name: search_catalog
-    category: catalog
-    description: Search for products from the online store, hosted on Shopify.
-    required: [meta, catalog]
-  - name: lookup_catalog
-    category: catalog
-    description: Look up multiple products or variants by identifier.
-    required: [meta, catalog]
-  - name: get_product
-    category: catalog
-    description: Retrieve complete product detail by identifier. Returns a singular product.
-    required: [meta, catalog]
-  - name: create_cart
-    category: cart
-    description: Creates a new cart.
-    required: [meta, cart]
-  - name: get_cart
-    category: cart
-    description: Get the cart contents.
-    required: [meta, id]
-  - name: update_cart
-    category: cart
-    description: Perform updates to a cart.
-    required: [meta, cart, id]
-  - name: cancel_cart
-    category: cart
-    description: Cancels a cart.
-    required: [meta, id]
-  - name: create_checkout
-    category: checkout
-    description: Creates a checkout. Returns checkout details, including line items, totals, discounts and taxes.
-    required: [meta, checkout]
-  - name: get_checkout
-    category: checkout
-    description: Returns details about the checkout, including line items, totals, and any applicable discounts or taxes.
-    required: [meta, id]
-  - name: update_checkout
-    category: checkout
-    description: Updates a checkout. Returns checkout details.
-    required: [meta, checkout, id]
-  - name: complete_checkout
-    category: checkout
-    description: Completes a checkout and returns the checkout result, including order ID and Thank You Page URL. Requires buyer approval.
-    required: [meta, id, checkout]
-  - name: cancel_checkout
-    category: checkout
-    description: Cancels a checkout.
-    required: [meta, id]
-  - name: get_order
-    category: order
-    description: Get the details of an order.
-    required: [meta, id]
-
+- name: search_catalog
+  category: catalog
+  description: Search for products from the online store, hosted on Shopify.
+  required:
+  - meta
+  - catalog
+- name: lookup_catalog
+  category: catalog
+  description: Look up multiple products or variants by identifier.
+  required:
+  - meta
+  - catalog
+- name: get_product
+  category: catalog
+  description: Retrieve complete product detail by identifier. Returns a singular product.
+  required:
+  - meta
+  - catalog
+- name: create_cart
+  category: cart
+  description: Creates a new cart.
+  required:
+  - meta
+  - cart
+- name: get_cart
+  category: cart
+  description: Get the cart contents.
+  required:
+  - meta
+  - id
+- name: update_cart
+  category: cart
+  description: Perform updates to a cart.
+  required:
+  - meta
+  - cart
+  - id
+- name: cancel_cart
+  category: cart
+  description: Cancels a cart.
+  required:
+  - meta
+  - id
+- name: create_checkout
+  category: checkout
+  description: Creates a checkout. Returns checkout details, including line items, totals, discounts and
+    taxes.
+  required:
+  - meta
+  - checkout
+- name: get_checkout
+  category: checkout
+  description: Returns details about the checkout, including line items, totals, and any applicable discounts
+    or taxes.
+  required:
+  - meta
+  - id
+- name: update_checkout
+  category: checkout
+  description: Updates a checkout. Returns checkout details.
+  required:
+  - meta
+  - checkout
+  - id
+- name: complete_checkout
+  category: checkout
+  description: Completes a checkout and returns the checkout result, including order ID and Thank You
+    Page URL. Requires buyer approval.
+  required:
+  - meta
+  - id
+  - checkout
+- name: cancel_checkout
+  category: checkout
+  description: Cancels a checkout.
+  required:
+  - meta
+  - id
+- name: get_order
+  category: order
+  description: Get the details of an order.
+  required:
+  - meta
+  - id
 x-evidence:
-  - fetched: '2026-08-11'
-    url: https://www.curehydration.com/api/ucp/mcp
-    method: 'POST tools/list'
-    http_status: 200
-    content_type: application/json; charset=utf-8
-    result: 13 tools returned with full JSON Schema 2020-12 inputSchema per tool.
-  - fetched: '2026-08-11'
-    url: https://www.curehydration.com/api/ucp/mcp
-    method: 'POST initialize'
-    http_status: 200
-    result: 'serverInfo universal-commerce 0.1.0, protocolVersion 2024-11-05.'
-  - fetched: '2026-08-11'
-    url: https://www.curehydration.com/api/ucp/mcp
-    method: 'POST tools/call search_catalog (no agent profile)'
-    http_status: 422
-    result: 'JSON-RPC -32001 profile_unreachable — tool invocation is agent-profile gated.'
-  - fetched: '2026-08-11'
-    url: https://www.curehydration.com/.well-known/ucp
-    http_status: 200
-    content_type: application/json; charset=utf-8
-
+- fetched: '2026-08-11'
+  url: https://www.curehydration.com/api/ucp/mcp
+  method: POST tools/list
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  result: 13 tools returned with full JSON Schema 2020-12 inputSchema per tool.
+- fetched: '2026-08-11'
+  url: https://www.curehydration.com/api/ucp/mcp
+  method: POST initialize
+  http_status: 200
+  result: serverInfo universal-commerce 0.1.0, protocolVersion 2024-11-05.
+- fetched: '2026-08-11'
+  url: https://www.curehydration.com/api/ucp/mcp
+  method: POST tools/call search_catalog (no agent profile)
+  http_status: 422
+  result: JSON-RPC -32001 profile_unreachable — tool invocation is agent-profile gated.
+- fetched: '2026-08-11'
+  url: https://www.curehydration.com/.well-known/ucp
+  http_status: 200
+  content_type: application/json; charset=utf-8
 notes:
-  - >-
-    This is a platform-provided surface. Cure Hydration did not build the UCP server; Shopify
-    serves it natively for the store. It is nonetheless served from Cure's own apex domain,
-    advertised by Cure's own robots.txt, llms.txt and agents.md, and it is the real, live,
-    machine-readable contract for transacting with this merchant.
-  - >-
-    The tool input schemas in mcp/cure-hydration-tools-list.json are the live, authoritative
-    parameter contract — this provider publishes no OpenAPI, so those schemas are the closest
-    thing to one.
+- This is a platform-provided surface. Cure Hydration did not build the UCP server; Shopify serves it
+  natively for the store. It is nonetheless served from Cure's own apex domain, advertised by Cure's own
+  robots.txt, llms.txt and agents.md, and it is the real, live, machine-readable contract for transacting
+  with this merchant.
+- The tool input schemas in mcp/cure-hydration-tools-list.json are the live, authoritative parameter contract
+  — this provider publishes no OpenAPI, so those schemas are the closest thing to one.
+deployment:
+  mode: remote
+  verified: searched
+  tools: 13
+  checked: '2026-08-12'
+  source: catalog MCP census
