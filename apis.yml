@@ -29,6 +29,19 @@ tags:
 - Consumer Packaged Goods
 - Beverages
 - Health and Wellness
+- E-Commerce
+- Direct to Consumer
+- Retail
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- MCP
+- GraphQL
+tags_raw:
+- Company
+- Consumer Packaged Goods
+- Beverages
+- Health and Wellness
 - Ecommerce
 - Direct to Consumer
 - Retail
@@ -79,6 +92,10 @@ apis:
   tags:
   - GraphQL
   - Storefront
+  - E-Commerce
+  tags_raw:
+  - GraphQL
+  - Storefront
   - Ecommerce
   properties:
   - type: GraphQL
@@ -95,6 +112,10 @@ apis:
   humanURL: https://www.curehydration.com/agents.md
   baseURL: https://www.curehydration.com
   tags:
+  - REST
+  - Catalog
+  - E-Commerce
+  tags_raw:
   - REST
   - Catalog
   - Ecommerce
