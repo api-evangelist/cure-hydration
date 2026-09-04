@@ -28,6 +28,22 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  probe_state: covered
+  source:
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  generated: '2026-09-03'
+  method: derived
 image: https://www.curehydration.com/cdn/shop/files/cure-logo1.jpg?v=1646413004
 url: https://raw.githubusercontent.com/api-evangelist/cure-hydration/refs/heads/main/apis.yml
 x-type: company
