@@ -96,6 +96,12 @@ apis:
   tags:
   - MCP
   - Agentic Commerce
+  - Universal Commerce Protocol
+  - Checkout
+  - Catalog
+  tags_raw:
+  - MCP
+  - Agentic Commerce
   - UCP
   - Checkout
   - Catalog
