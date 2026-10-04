@@ -114,6 +114,9 @@ apis:
     url: https://www.curehydration.com/agents.md
   - type: LLMsTxt
     url: llms/cure-hydration-llms.txt
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 - name: CURE Storefront GraphQL API
   description: >-
     The Shopify Storefront GraphQL API served on Cure Hydration's own apex domain, pinned to
@@ -137,13 +140,15 @@ apis:
     url: graphql/cure-hydration-graphql.yml
   - type: Documentation
     url: https://shopify.dev/docs/api/storefront
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-graphql
 - name: CURE Storefront JSON Endpoints
   description: >-
     Read-only, unauthenticated JSON endpoints the store documents for agents in /agents.md —
     product list, product detail by handle, collection list, collection products, store
     metadata and search. Unversioned, page-and-limit paginated, ETag-validated.
   humanURL: https://www.curehydration.com/agents.md
-  baseURL: https://www.curehydration.com
   tags:
   - REST
   - Catalog
@@ -157,6 +162,9 @@ apis:
     url: examples/_index.yml
   - type: Documentation
     url: https://www.curehydration.com/agents.md
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-json
 common:
 - type: Website
   url: https://www.curehydration.com
