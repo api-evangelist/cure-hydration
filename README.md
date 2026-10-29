@@ -64,5 +64,126 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Cure Hydration is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Cure Hydration (CURE) is a New York based direct-to-consumer beverage brand founded in 2019 by Lauren Picasso, selling plant-based electrolyte drink mixes built on the World Health Organization's Oral Rehydration Solution formula — organic coconut water, pink Himalayan salt, no added sugar. It is not a software company and it runs no developer programme, but its Shopify storefront serves a substantive first-party machine surface: a live Universal Commerce Protocol (UCP 2026-04-08) MCP server at /api/ucp/mcp with 13 catalog, cart, checkout and order tools, an anonymously introspectable Storefront GraphQL API, agent instructions at /agents.md and /llms.txt, a dedicated agent-discovery sitemap, and OpenID Connect discovery for shopper accounts. This profile records that surface as probed.
+
+**Areas:** Company · Consumer Packaged Goods · Beverages · Health and Wellness · E-Commerce · Direct to Consumer · Retail · Shopify · Agentic Commerce · Universal Commerce Protocol · MCP · GraphQL
+
+## Cure Hydration on APIs.io
+
+Everything profiled for Cure Hydration is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/cure-hydration/](https://apis.io/providers/cure-hydration/)** — or go straight to one of the APIs or properties below.
+
+### APIs (3)
+
+- [CURE Universal Commerce Protocol (UCP) MCP Server](https://apis.io/apis/cure-hydration/cure-universal-commerce-protocol-ucp-mcp-server/) — A live, first-party, anonymously discoverable Model Context Protocol server implementing the Shopify Universal Commerce Protocol shopping service for the…
+- [CURE Storefront GraphQL API](https://apis.io/apis/cure-hydration/cure-storefront-graphql-api/) — The Shopify Storefront GraphQL API served on Cure Hydration's own apex domain, pinned to API version 2026-04. Full introspection answered anonymously on…
+- [CURE Storefront JSON Endpoints](https://apis.io/apis/cure-hydration/cure-storefront-json-endpoints/) — Read-only, unauthenticated JSON endpoints the store documents for agents in /agents.md — product list, product detail by handle, collection list, collection…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [CURE Universal Commerce Protocol (UCP) MCP Server](https://apis.io/servers/cure-hydration/cure-universal-commerce-protocol-ucp-mcp-server/)
+
+#### Examples (3)
+
+Example requests and responses.
+
+- [Cure Hydration Collections Example](https://apis.io/examples/cure-hydration/cure-hydration-collections-example/)
+- [Cure Hydration Meta Example](https://apis.io/examples/cure-hydration/cure-hydration-meta-example/)
+- [Cure Hydration Products Example](https://apis.io/examples/cure-hydration/cure-hydration-products-example/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Cure Hydration Authentication](https://apis.io/security/cure-hydration/cure-hydration-authentication/)
+- [Cure Hydration Domain Security](https://apis.io/security/cure-hydration/cure-hydration-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Cure Hydration Scopes](https://apis.io/scopes/cure-hydration/cure-hydration-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Cure Hydration Plans Pricing](https://apis.io/plans/cure-hydration/cure-hydration-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Cure Hydration Rate Limits](https://apis.io/rate-limits/cure-hydration/cure-hydration-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.curehydration.com)
+- [Documentation](https://www.curehydration.com/agents.md)
+- [API reference](https://www.curehydration.com/llms.txt)
+- [Pricing](https://www.curehydration.com/collections/shop-all)
+- [Sign up](https://www.curehydration.com/account/login)
+- [Support](https://www.curehydration.com/pages/contact)
+- [Blog](https://www.curehydration.com/blogs/news)
+- [Terms of service](https://www.curehydration.com/policies/terms-of-service)
+- [Privacy policy](https://www.curehydration.com/policies/privacy-policy)
+
+## API Evangelist rating
+
+**Kin Score 35.9** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 15.6 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 54.8 |
+| Access clarity | 44.7 |
+
+**Agent readiness 29.6** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | platform (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | derived (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | documented (partial credit) |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | platform (partial credit) |
+
+**Regulatory alignment 32.8** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/cure-hydration/](https://apis.io/providers/cure-hydration/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Cure Hydration: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/cure-hydration/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
